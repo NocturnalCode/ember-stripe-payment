@@ -13,7 +13,7 @@ module.exports = {
 
     this.app = app;
 
-    if (!process.env.EMBER_CLI_FASTBOOT) {
+    if (typeof FastBoot === 'undefined') {
       app.import(app.bowerDirectory + '/jquery.payment/lib/jquery.payment.min.js');
     }
 
