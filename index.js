@@ -24,7 +24,8 @@ module.exports = {
 
   treeForVendor(vendorTree) {
     let trees = [];
-    let hammerTree = new Funnel(path.dirname(require.resolve('jquery.payment/lib')), {
+    const assetPath = __dirname + '/' + app.bowerDirectory + '/jquery.payment/lib/';
+    let hammerTree = new Funnel(assetPath, {
       files: ['jquery.payment.min.js']
     });
     hammerTree = map(hammerTree, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
