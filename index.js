@@ -1,20 +1,46 @@
-/* jshint node: true */
+/* eslint-env node */
 'use strict';
 
-var map = require('broccoli-stew').map;
+const path = require('path');
+const Funnel = require('broccoli-funnel');
+const MergeTrees = require('broccoli-merge-trees');
+const map = require('broccoli-stew').map;
 
 module.exports = {
-  name: 'ember-stripe-payment',
-  treeForVendor(defaultTree) {
-    var browserVendorLib = new Funnel(...);
 
-    browserVendorLib = map(browserVendorLib, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
+  name: 'ember-gestures',
 
-    return new mergeTrees([defaultTree, browserVendorLib]);
-  },
-  included: function(app) {
+  included(app) {
     this._super.included.apply(this, arguments);
-    app.import(app.bowerDirectory + '/jquery.payment/lib/jquery.payment.min.js');
-    return app;
+
+    // see: https://github.com/ember-cli/ember-cli/issues/3718
+    if (typeof app.import !== 'function' && app.app) {
+      app = app.app;
+    }
+
+
+    app.import('vendor/hammer.js');
+  },
+
+  treeForVendor(vendorTree) {
+    let trees = [];
+    let hammerTree = new Funnel(path.dirname(require.resolve('jquery.payment/lib')), {
+      files: ['jquery.payment.min.js']
+    });
+    hammerTree = map(hammerTree, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
+
+
+    if (vendorTree !== undefined) {
+      trees.push(vendorTree);
+    }
+
+    trees.push(hammerTree);
+
+    return new MergeTrees(trees);
+  },
+
+  isDevelopingAddon() {
+    return false;
   }
+
 };
