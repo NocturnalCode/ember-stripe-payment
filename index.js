@@ -1,22 +1,20 @@
 /* jshint node: true */
 'use strict';
 
+var map = require('broccoli-stew').map;
+
 module.exports = {
   name: 'ember-stripe-payment',
+  treeForVendor(defaultTree) {
+    var browserVendorLib = new Funnel(...);
+
+    browserVendorLib = map(browserVendorLib, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
+
+    return new mergeTrees([defaultTree, browserVendorLib]);
+  },
   included: function(app) {
     this._super.included.apply(this, arguments);
-
-    // see: https://github.com/ember-cli/ember-cli/issues/3718
-    while (typeof app.import !== 'function' && app.app) {
-      app = app.app;
-    }
-
-    this.app = app;
-
-    if (typeof FastBoot === 'undefined') {
-      app.import(app.bowerDirectory + '/jquery.payment/lib/jquery.payment.min.js');
-    }
-
+    app.import(app.bowerDirectory + '/jquery.payment/lib/jquery.payment.min.js');
     return app;
   }
 };
