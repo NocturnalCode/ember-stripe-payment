@@ -19,11 +19,12 @@ module.exports = {
     }
 
 
-    app.import('vendor/hammer.js');
+    app.import('vendor/jquery.payment.min.js');
   },
 
   treeForVendor(vendorTree) {
     let trees = [];
+    const app = this._findHost();
     const assetPath = __dirname + '/' + app.bowerDirectory + '/jquery.payment/lib/';
     let hammerTree = new Funnel(assetPath, {
       files: ['jquery.payment.min.js']
